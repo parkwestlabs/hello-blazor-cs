@@ -11,5 +11,17 @@ trim_trailing_whitespace = true
 [*.cs]
 max_line_length = 120
 
+# ----- NoWarn -----
+# CA2007: Blazorでは不要（むしろ有害）なので完全に非表示にする
+dotnet_diagnostic.CA2007.severity = none
+# CA1515: アプリケーションプロジェクト（Blazorなど）では public で問題ないため非表示
+dotnet_diagnostic.CA1515.severity = none
+
+# ----- WarningsAsErrors -----
+# IDE0005: 使用していない using をエラーにする（コード保存時に自動削除も可能になります）
+dotnet_diagnostic.IDE0005.severity = error
+# IDE0055: コードのフォーマット（インデントやスペース）違反をエラーにする
+dotnet_diagnostic.IDE0055.severity = error
+
 [*.razor]
 max_line_length = 150
