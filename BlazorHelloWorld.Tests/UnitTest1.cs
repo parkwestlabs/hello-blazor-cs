@@ -1,4 +1,4 @@
-﻿namespace BlazorHelloWorld.Tests;
+namespace BlazorHelloWorld.Tests;
 
 public class UnitTest1
 {
