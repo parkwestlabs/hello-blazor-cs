@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: "global.json"
+
+      - name: Restore .NET Tools
+        run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Check vulnerable packages
+        run: dotnet list package --vulnerable --include-transitive
+
+      - name: Check format
+        run: dotnet format --verify-no-changes --no-restore --severity info
+
+      - name: Build project
+        run: dotnet build -c Release --no-restore
+
+      - name: Test with Coverage
+        run: dotnet test -c Release --no-build --collect:"XPlat Code Coverage"
+
+      - name: Check Coverage Threshold
+        run: |
+          dotnet tool run reportgenerator \
+            -reports:"**/coverage.cobertura.xml" \
+            -targetdir:"coveragereport" \
+            -reporttypes:Html \
+            --minimumCoverageThresholds:lineCoverage=80 \
+            --minimumCoverageThresholds:branchCoverage=80 \
+            "-filefilters:-*Program.cs;-*App*;-*Routes*;-*Layout*;-*Error*"
