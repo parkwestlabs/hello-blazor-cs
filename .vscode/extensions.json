@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "ms-dotnettools.csdevkit",
+        "sonarsource.sonarlint-vscode",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}

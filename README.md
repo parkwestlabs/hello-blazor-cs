@@ -1,2 +1,127 @@
-# hello-blazor-cs
-C# .NET Blazor server starter template
+# CSharp dotnet 10 Blazor Server App Template
+
+C# .NET Blazor server quick start template
+
+## Init Project Notes
+
+```bash
+dotnet --version
+# 10.0.400
+
+dotnet new blazor -o BlazorHelloWorld --interactivity Server
+dotnet new xunit -o BlazorHelloWorld.Tests
+
+# add reference
+dotnet add BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj reference BlazorHelloWorld/BlazorHelloWorld.csproj
+
+dotnet new sln -n BlazorHelloWorld
+dotnet sln add BlazorHelloWorld/BlazorHelloWorld.csproj
+dotnet sln add BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj
+```
+
+* create misc configs
+
+```bash
+# create UseArtifactsOutput true in Directory.Build.props
+dotnet new buildprops --use-artifacts
+
+# to ensure dotnet version
+dotnet new globaljson
+```
+
+* fix crlf to lf
+
+```bash
+# probably unset is recommended
+git config --global --unset core.autocrlf
+
+# find crlf
+git ls-files --eol | grep crlf  # i/crlf  w/crlf ...
+
+echo "* text=auto" > .gitattributes
+
+# renormalize update index files to lf
+git add --renormalize .         # i/lf    w/crlf
+
+# stash and pop update worktree files to lf
+git stash
+git stash pop                   # i/crlf  w/lf
+
+# update index files again to lf
+git add --renormalize .         # i/lf    w/lf
+
+git commit -m "chore: convert crlf to lf"
+```
+
+* add packages
+
+```bash
+cd BlazorHelloWorld/
+
+# SonarQube
+dotnet add package SonarAnalyzer.CSharp
+
+# DI analyzer
+dotnet add package DependencyInjection.Lifetime.Analyzers
+
+# move these common ItemGroup to Directory.Build.props
+```
+
+```bash
+cd BlazorHelloWorld.Tests/
+
+# bunit: Blazor UI Component Test Framework
+dotnet add package bunit
+```
+
+* add tools
+
+```bash
+# to ensure tools version
+dotnet new tool-manifest
+
+dotnet tool install --local dotnet-reportgenerator-globaltool
+
+# install and init husky
+dotnet tool install --local Husky
+dotnet husky install
+# Git hooks installed
+
+dotnet husky add pre-commit -c "dotnet format --verify-no-changes --severity info"
+```
+
+* run format test
+
+```bash
+# check vulnerable packages
+dotnet list package --vulnerable --include-transitive
+
+# check format
+dotnet format --verify-no-changes --severity info
+
+# check lint
+dotnet clean && dotnet build
+
+# run tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
+# TestResults/<guid>/coverage.cobertura.xml
+
+# generate coverage report
+dotnet tool run reportgenerator \
+  -reports:"**/coverage.cobertura.xml" \
+  -targetdir:"coveragereport" \
+  -reporttypes:Html \
+  --minimumCoverageThresholds:lineCoverage=80 \
+  --minimumCoverageThresholds:branchCoverage=80 \
+  "-filefilters:-*Program.cs;-*App*;-*Routes*;-*Layout*;-*Error*"
+
+# run tests with auto rerun
+dotnet watch test --project BlazorHelloWorld.Tests
+```
+
+* run dev server
+
+```bash
+# dev server with auto reload
+dotnet watch run --project BlazorHelloWorld
+```

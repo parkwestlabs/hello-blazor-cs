@@ -1,0 +1,33 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        ".husky/_": true,
+        "**/artifacts": true,
+        "**/TestResults": true,
+        "**/coveragereport": true,
+    },
+    "[csharp]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "files.trimTrailingWhitespace": true,
+        "files.trimFinalNewlines": true,
+    },
+    "[aspnetcorerazor]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "files.trimTrailingWhitespace": true,
+        "files.trimFinalNewlines": true,
+    },
+    "cSpell.words": [
+        "Blazor",
+        "Bunit",
+    ]
+}
