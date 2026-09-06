@@ -1,7 +1,27 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<hr />
+
+<h2>Blazor Real-time Binding Test</h2>
+
+<div class="mb-3">
+    <label for="something" class="form-label">Please type something here.</label>
+    <input type="text" id="something" class="form-control" @bind="InputText" @bind:event="oninput"
+           placeholder="something here..." />
+</div>
+
+<div class="alert alert-info mt-3">
+    <strong>Your Input:</strong> @InputText
+</div>
+
+@code {
+    // 💡 Reactの [inputText, setInputText] = useState("") と同じ役割を持つプロパティ
+    private string InputText { get; set; } = string.Empty;
+}
