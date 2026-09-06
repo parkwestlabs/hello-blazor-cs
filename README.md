@@ -72,6 +72,9 @@ cd BlazorHelloWorld.Tests/
 
 # bunit: Blazor UI Component Test Framework
 dotnet add package bunit
+
+# mock
+dotnet add package NSubstitute
 ```
 
 * add tools

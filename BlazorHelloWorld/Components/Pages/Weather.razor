@@ -1,5 +1,11 @@
 ﻿@page "/weather"
+
+@* OnInitializedAsync を確実に1回しか走らなくしてチラつき防止 (Reactと同じ挙動) *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [StreamRendering]
+
+@using BlazorHelloWorld.Services
+@inject IWeatherService WeatherService
 
 <PageTitle>Weather</PageTitle>
 
