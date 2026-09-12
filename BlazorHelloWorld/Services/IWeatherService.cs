@@ -4,5 +4,5 @@ namespace BlazorHelloWorld.Services;
 
 public interface IWeatherService
 {
-    Task<WeatherForecast[]> GetActiveForecastsAsync();
+    Task<WeatherForecast[]> GetActiveForecastsAsync(CancellationToken cancellationToken = default);
 }

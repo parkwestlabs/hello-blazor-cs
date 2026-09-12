@@ -4,5 +4,9 @@ namespace BlazorHelloWorld.Repositories;
 
 public interface IWeatherRepository
 {
-    Task<WeatherForecast[]> FetchFromApiAsync();
+    Task<OpenMeteoResponse?> FetchForecastAsync(
+        double latitude,
+        double longitude,
+        CancellationToken cancellationToken = default
+    );
 }

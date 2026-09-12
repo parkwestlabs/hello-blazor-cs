@@ -106,8 +106,8 @@ dotnet format --verify-no-changes --severity info
 dotnet clean && dotnet build
 
 # run tests with coverage
-dotnet test --collect:"XPlat Code Coverage"
-# TestResults/<guid>/coverage.cobertura.xml
+dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+# ./BlazorHelloWorld.Tests/TestResults/<guid>/coverage.cobertura.xml
 
 # generate coverage report
 dotnet tool run reportgenerator \
@@ -115,8 +115,7 @@ dotnet tool run reportgenerator \
   -targetdir:"coveragereport" \
   -reporttypes:Html \
   --minimumCoverageThresholds:lineCoverage=80 \
-  --minimumCoverageThresholds:branchCoverage=80 \
-  "-filefilters:-*Program.cs;-*App*;-*Routes*;-*Layout*;-*Error*"
+  --minimumCoverageThresholds:branchCoverage=80
 
 # run tests with auto rerun
 dotnet watch test --project BlazorHelloWorld.Tests
@@ -128,3 +127,16 @@ dotnet watch test --project BlazorHelloWorld.Tests
 # dev server with auto reload
 dotnet watch run --project BlazorHelloWorld
 ```
+
+* upgrade packages
+
+```bash
+dotnet package list --outdated
+
+dotnet package update
+```
+
+## Trouble shooting
+
+* dup entry in coverage report
+  * clear cache: `rm -fr ./BlazorHelloWorld.Tests/TestResults/*`

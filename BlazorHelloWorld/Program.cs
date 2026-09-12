@@ -1,4 +1,5 @@
 using BlazorHelloWorld.Components;
+using BlazorHelloWorld.Repositories;
 using BlazorHelloWorld.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<IWeatherService, WeatherService>();
+
+builder.Services.AddHttpClient<IWeatherRepository, WeatherRepository>(client =>
+{
+    // config values from appsettings.json
+    var baseUrl = builder.Configuration["WeatherApi:BaseUrl"];
+    var uriString = baseUrl ?? throw new InvalidOperationException("APIのURLが設定されていません。");
+    client.BaseAddress = new Uri(uriString);
+});
 
 var app = builder.Build();
 

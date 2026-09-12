@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bunit;
 using BlazorHelloWorld.Components.Pages;
 using BlazorHelloWorld.Models;
@@ -12,6 +13,12 @@ public class WeatherTest
     [Fact]
     public void WeatherComponent_ShouldRenderLoading_ThenShowMockedData()
     {
+        var culture = new CultureInfo("ja-JP");
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+
         // 1. Arrange: bUnit コンテキストの生成
         using var ctx = new BunitContext();
 
