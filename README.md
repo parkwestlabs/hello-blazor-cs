@@ -8,15 +8,32 @@ C# .NET Blazor server quick start template
 dotnet --version
 # 10.0.400
 
-dotnet new blazor -o BlazorHelloWorld --interactivity Server
-dotnet new mstest -n BlazorHelloWorld.Tests
+dotnet new update
+# All template packages are up-to-date.
+
+mkdir src tests
+
+# add projects
+dotnet new blazor -n MyApp.Web -o src/MyApp.Web --interactivity Server
+dotnet new classlib -n MyApp.Core -o src/MyApp.Core
+dotnet new classlib -n MyApp.Data -o src/MyApp.Data
+dotnet new mstest -n MyApp.Tests -o tests/MyApp.Tests
 
 # add reference
-dotnet add BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj reference BlazorHelloWorld/BlazorHelloWorld.csproj
+dotnet add src/MyApp.Web reference src/MyApp.Core
+dotnet add src/MyApp.Web reference src/MyApp.Data
+dotnet add src/MyApp.Data reference src/MyApp.Core
 
-dotnet new sln -n BlazorHelloWorld
-dotnet sln add BlazorHelloWorld/BlazorHelloWorld.csproj
-dotnet sln add BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj
+dotnet add tests/MyApp.Tests reference src/MyApp.Web
+dotnet add tests/MyApp.Tests reference src/MyApp.Core
+dotnet add tests/MyApp.Tests reference src/MyApp.Data
+
+# add solution
+dotnet new sln -n MyApp
+dotnet sln MyApp.slnx add src/MyApp.Web
+dotnet sln MyApp.slnx add src/MyApp.Core
+dotnet sln MyApp.slnx add src/MyApp.Data
+dotnet sln MyApp.slnx add tests/MyApp.Tests
 ```
 
 * create misc configs
@@ -29,7 +46,7 @@ dotnet new buildprops --use-artifacts
 dotnet new globaljson
 ```
 
-* fix crlf to lf
+* fix crlf to lf (note: dotnet new blazor generate crlf files)
 
 ```bash
 # probably unset is recommended
@@ -56,28 +73,24 @@ git commit -m "chore: convert crlf to lf"
 * add packages
 
 ```bash
-cd BlazorHelloWorld/
-
 # SonarQube
-dotnet add package SonarAnalyzer.CSharp
+dotnet add src/MyApp.Web package SonarAnalyzer.CSharp
 
 # DI analyzer
-dotnet add package DependencyInjection.Lifetime.Analyzers
+dotnet add src/MyApp.Web package DependencyInjection.Lifetime.Analyzers
 
 # move these common ItemGroup to Directory.Build.props
 ```
 
 ```bash
-cd BlazorHelloWorld.Tests/
-
 # coverage in MTP
-dotnet add package Microsoft.Testing.Extensions.CodeCoverage
+dotnet add tests/MyApp.Tests package Microsoft.Testing.Extensions.CodeCoverage
 
 # bunit: Blazor UI Component Test Framework
-dotnet add package bunit
+dotnet add tests/MyApp.Tests package bunit
 
 # mock
-dotnet add package NSubstitute
+dotnet add tests/MyApp.Tests package NSubstitute
 ```
 
 * add tools
@@ -124,14 +137,14 @@ dotnet tool run reportgenerator \
 open TestResults/html/index.html
 
 # run tests with auto rerun
-dotnet watch test --project BlazorHelloWorld.Tests
+dotnet watch test --project tests/MyApp.Tests
 ```
 
 * run dev server
 
 ```bash
 # dev server with auto reload
-dotnet watch run --project BlazorHelloWorld
+dotnet watch run --project src/MyApp.Web
 ```
 
 * upgrade packages

@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj" />
-  <Project Path="BlazorHelloWorld/BlazorHelloWorld.csproj" />
-</Solution>
