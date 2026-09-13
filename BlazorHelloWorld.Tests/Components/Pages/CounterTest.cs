@@ -3,13 +3,16 @@ using BlazorHelloWorld.Components.Pages;
 
 namespace BlazorHelloWorld.Tests.Components.Pages;
 
+[TestClass]
 public class CounterTest
 {
-    [Fact]
+    [TestMethod]
     public void Counter_ShouldIncrement_WhenButtonClicked()
     {
         using var ctx = new BunitContext();
         var cut = ctx.Render<Counter>();    // cut: Component Under Test
+
+        Assert.IsNotNull(cut);
 
         cut.Find("p[role='status']").MarkupMatches("<p role=\"status\">Current count: 0</p>");
 
@@ -18,12 +21,13 @@ public class CounterTest
         cut.Find("p[role='status']").MarkupMatches("<p role=\"status\">Current count: 1</p>");
     }
 
-    [Fact]
+    [TestMethod]
     public void Counter_ShouldIncrementToFive_WhenButtonClickedFiveTimes()
     {
         // 1. Arrange: Counterコンポーネントをレンダリング
         using var ctx = new BunitContext();
         var cut = ctx.Render<Counter>();
+        Assert.IsNotNull(cut);
 
         // 2. Act: for文を使ってボタンを5回連続でクリック
         var buttonElement = cut.Find("button");

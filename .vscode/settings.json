@@ -4,7 +4,6 @@
         ".husky/_": true,
         "**/artifacts": true,
         "**/TestResults": true,
-        "**/coveragereport": true,
     },
     "[csharp]": {
         "editor.formatOnSave": true,

@@ -9,7 +9,7 @@ dotnet --version
 # 10.0.400
 
 dotnet new blazor -o BlazorHelloWorld --interactivity Server
-dotnet new xunit -o BlazorHelloWorld.Tests
+dotnet new mstest -n BlazorHelloWorld.Tests
 
 # add reference
 dotnet add BlazorHelloWorld.Tests/BlazorHelloWorld.Tests.csproj reference BlazorHelloWorld/BlazorHelloWorld.csproj
@@ -70,6 +70,9 @@ dotnet add package DependencyInjection.Lifetime.Analyzers
 ```bash
 cd BlazorHelloWorld.Tests/
 
+# coverage in MTP
+dotnet add package Microsoft.Testing.Extensions.CodeCoverage
+
 # bunit: Blazor UI Component Test Framework
 dotnet add package bunit
 
@@ -106,16 +109,19 @@ dotnet format --verify-no-changes --severity info
 dotnet clean && dotnet build
 
 # run tests with coverage
-dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
-# ./BlazorHelloWorld.Tests/TestResults/<guid>/coverage.cobertura.xml
+dotnet test -- --coverage --coverage-output-format cobertura --coverage-settings coverage.settings.xml
+# ./TestResults/<guid>.cobertura.xml
 
 # generate coverage report
+# warning: "TestResults/*.cobertura.xml" will merge all xml results
 dotnet tool run reportgenerator \
-  -reports:"**/coverage.cobertura.xml" \
-  -targetdir:"coveragereport" \
+  -reports:"TestResults/*.cobertura.xml" \
+  -targetdir:"TestResults/html" \
   -reporttypes:Html \
   --minimumCoverageThresholds:lineCoverage=80 \
   --minimumCoverageThresholds:branchCoverage=80
+
+open TestResults/html/index.html
 
 # run tests with auto rerun
 dotnet watch test --project BlazorHelloWorld.Tests
@@ -138,5 +144,7 @@ dotnet package update
 
 ## Trouble shooting
 
+* `error CHARSET: Fix file encoding.`
+  * select Save with Encoding `UTF-8 with BOM` → `UTF-8` in vscode
 * dup entry in coverage report
-  * clear cache: `rm -fr ./BlazorHelloWorld.Tests/TestResults/*`
+  * clear cache: `rm -fr ./TestResults/*`

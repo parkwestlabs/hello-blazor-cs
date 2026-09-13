@@ -5,9 +5,10 @@ using NSubstitute;
 
 namespace BlazorHelloWorld.Tests.Services;
 
+[TestClass]
 public class WeatherServiceTest
 {
-    [Fact]
+    [TestMethod]
     public async Task GetActiveForecastsAsync_WhenResponseIsValid_ReturnsForecasts()
     {
         var mockRepository = Substitute.For<IWeatherRepository>();
@@ -27,24 +28,24 @@ public class WeatherServiceTest
             }
         };
 
-        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>())
+        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(), Arg.Any<CancellationToken>())
             .Returns(dummyResponse);
 
         // 1. Arrange: テスト対象のサービスをインスタンス化
         var service = new WeatherService(mockRepository);
 
         // 2. Act: メソッドを非同期で実行
-        var result = await service.GetActiveForecastsAsync();
+        var result = await service.GetActiveForecastsAsync(CancellationToken.None);
 
         // 3. Assert: 取得したデータの検証
-        Assert.NotNull(result);
-        Assert.Equal(5, result.Length);
-        Assert.Equal("Freezing", result[0].Summary);
-        Assert.Equal(30, result[0].TemperatureC);
+        Assert.IsNotNull(result);
+        Assert.HasCount(5, result);
+        Assert.AreEqual("Freezing", result[0].Summary);
+        Assert.AreEqual(30, result[0].TemperatureC);
     }
 
-    [Fact]
-    public async Task GetActiveForecastsAsync_WhenRepositoryReturnsNull_ReturnsEmptyArray()
+    [TestMethod]
+    public async Task GetActiveForecastsAsync_WhenRepositoryReturnsNull_ReturnsIsEmptyArray()
     {
         // Arrange
         var mockRepository = Substitute.For<IWeatherRepository>();
@@ -56,15 +57,15 @@ public class WeatherServiceTest
         var service = new WeatherService(mockRepository);
 
         // Act
-        var result = await service.GetActiveForecastsAsync();
+        var result = await service.GetActiveForecastsAsync(Arg.Any<CancellationToken>());
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        Assert.IsNotNull(result);
+        Assert.IsEmpty(result);
     }
 
-    [Fact]
-    public async Task GetActiveForecastsAsync_WhenDailyIsNull_ReturnsEmptyArray()
+    [TestMethod]
+    public async Task GetActiveForecastsAsync_WhenDailyIsNull_ReturnsIsEmptyArray()
     {
         // Arrange
         var mockRepository = Substitute.For<IWeatherRepository>();
@@ -78,10 +79,10 @@ public class WeatherServiceTest
         var service = new WeatherService(mockRepository);
 
         // Act
-        var result = await service.GetActiveForecastsAsync();
+        var result = await service.GetActiveForecastsAsync(Arg.Any<CancellationToken>());
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result); // if (response?.Daily is null) 内の return []; を通過
+        Assert.IsNotNull(result);
+        Assert.IsEmpty(result); // if (response?.Daily is null) 内の return []; を通過
     }
 }

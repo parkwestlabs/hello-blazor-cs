@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <CodeCoverage>
+    <!-- 自動生成コードや一般的な除外属性の指定 -->
+    <Attributes>
+      <Exclude>
+        <Attribute>^System\.ObsoleteAttribute$</Attribute>
+        <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+        <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
+      </Exclude>
+    </Attributes>
+
+    <!-- ファイルパスによる除外（正規表現で指定） -->
+    <Sources>
+      <Exclude>
+        <!-- \b は単語の区切り、.* は任意の文字列、\.cs$ は拡張子を意味します -->
+        <Source>.*\\obj\\.*</Source>
+        <Source>.*\.g\.cs$</Source>
+        <Source>.*\bProgram\.cs$</Source>
+        <Source>.*\bApp\.razor$</Source>
+        <Source>.*\bRoutes\.razor$</Source>
+        <Source>.*Layout.*\.razor$</Source>
+        <Source>.*Error.*\.razor$</Source>
+      </Exclude>
+    </Sources>
+
+    <!-- プロパティ（ゲッター/セッター）のスキップ -->
+    <Functions>
+      <Exclude>
+        <Function>^.*\.get_.*$</Function>
+        <Function>^.*\.set_.*$</Function>
+      </Exclude>
+    </Functions>
+  </CodeCoverage>
+</Configuration>

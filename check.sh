@@ -5,11 +5,15 @@ dotnet format --verify-no-changes --severity info
 
 dotnet clean && dotnet build
 
-dotnet test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+dotnet test -- \
+  --coverage \
+  --coverage-output-format cobertura \
+  --coverage-output coverage.cobertura.xml \
+  --coverage-settings coverage.settings.xml
 
 dotnet tool run reportgenerator \
-  -reports:"**/coverage.cobertura.xml" \
-  -targetdir:"coveragereport" \
+  -reports:"TestResults/coverage.cobertura.xml" \
+  -targetdir:"TestResults/html" \
   -reporttypes:Html \
   --minimumCoverageThresholds:lineCoverage=80 \
   --minimumCoverageThresholds:branchCoverage=80

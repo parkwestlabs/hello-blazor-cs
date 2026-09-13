@@ -7,9 +7,10 @@ using BlazorHelloWorld.Tests.Helpers;
 
 namespace BlazorHelloWorld.Tests.Repositories;
 
+[TestClass]
 public class WeatherRepositoryTests
 {
-    [Fact]
+    [TestMethod]
     public async Task GetForecastAsync_Returns_WeatherData()
     {
         var expectedResponse = new OpenMeteoResponse
@@ -43,20 +44,21 @@ public class WeatherRepositoryTests
         };
         var repository = new WeatherRepository(httpClient);
 
-        var result = await repository.FetchForecastAsync(35.6785, 139.6823);
+        var result = await repository.FetchForecastAsync(35.6785, 139.6823, CancellationToken.None);
 
-        Assert.NotNull(result);
-        Assert.NotNull(testHandler.LastRequest);
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(testHandler.LastRequest);
 
-        Assert.Equal(HttpMethod.Get, testHandler.LastRequest.Method);
-        Assert.Contains("v1/forecast", testHandler.LastRequest.RequestUri?.ToString(), StringComparison.Ordinal);
+        Assert.AreEqual(HttpMethod.Get, testHandler.LastRequest.Method);
+        Assert.IsNotNull(testHandler.LastRequest.RequestUri);
+        Assert.Contains("v1/forecast", testHandler.LastRequest.RequestUri.ToString(), StringComparison.Ordinal);
 
-        Assert.Equal(5, result.Daily.Time.Count);
-        Assert.Equal(new DateOnly(2026, 9, 1), result.Daily.Time[0]);
-        Assert.Equal(29.5, result.Daily.Temperature2mMax[0]);
+        Assert.HasCount(5, result.Daily.Time);
+        Assert.AreEqual(new DateOnly(2026, 9, 1), result.Daily.Time[0]);
+        Assert.AreEqual(29.5, result.Daily.Temperature2mMax[0]);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task GetForecastAsync_ThrowsHttpRequestException_WhenApiReturns500InternalServerError()
     {
         // 1. 500 Internal Server Error を返すレスポンスを準備
@@ -75,14 +77,14 @@ public class WeatherRepositoryTests
         // 内部で EnsureSuccessStatusCode() を呼び出して HttpRequestException を発生させます。
         var exception = await Assert.ThrowsAsync<HttpRequestException>(async () =>
         {
-            await repository.FetchForecastAsync(35.6785, 139.6823);
+            await repository.FetchForecastAsync(35.6785, 139.6823, CancellationToken.None);
         });
 
         // 4. 追加の検証（必要に応じてステータスコードが500であることを確認）
-        Assert.Equal(HttpStatusCode.InternalServerError, exception.StatusCode);
+        Assert.AreEqual(HttpStatusCode.InternalServerError, exception.StatusCode);
 
         // リクエストが確かに送信されたかもチェック
-        Assert.NotNull(fakeHandler.LastRequest);
-        Assert.Equal(HttpMethod.Get, fakeHandler.LastRequest.Method);
+        Assert.IsNotNull(fakeHandler.LastRequest);
+        Assert.AreEqual(HttpMethod.Get, fakeHandler.LastRequest.Method);
     }
 }
