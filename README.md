@@ -2,6 +2,32 @@
 
 C# .NET Blazor server quick start template
 
+## Quick Start
+
+```bash
+docker compose up
+# or docker compose up --build
+
+open http://localhost/
+
+docker compose down
+```
+
+## Docker Run
+
+```bash
+docker build -t my-blazor-app .
+
+docker run -p 80:8080 --rm \
+  -e "DataProtectionSettings__AppSecretKey=local-dummy-key" \
+  --name app my-blazor-app
+
+open http://localhost/
+```
+
+* note: mount volume will work only for local
+  - `-v "$HOME/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys"`
+
 ## Init Project Notes
 
 ```bash

@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.DataProtection;
 using MyApp.Web.Components;
 using MyApp.Core.Interfaces;
 using MyApp.Core.Services;
 using MyApp.Data.Repositories;
+using MyApp.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,17 @@ builder.Services.AddHttpClient<IWeatherRepository, WeatherRepository>(client =>
     var uriString = baseUrl ?? throw new InvalidOperationException("APIのURLが設定されていません。");
     client.BaseAddress = new Uri(uriString);
 });
+
+string? secretKey = builder.Configuration["DataProtectionSettings:AppSecretKey"];
+
+if (string.IsNullOrEmpty(secretKey))
+{
+    throw new InvalidOperationException("DataProtectionSettings__AppSecretKey not set");
+}
+
+builder.Services.AddDataProtection()
+    .SetApplicationName("MyBlazorApp")
+    .UseSimpleCryptoTokenProvider(secretKey);
 
 var app = builder.Build();
 
