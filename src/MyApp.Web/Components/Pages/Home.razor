@@ -11,17 +11,29 @@ Welcome to your new app.
 
 <h2>Blazor Real-time Binding Test</h2>
 
-<div class="mb-3">
-    <label for="something" class="form-label">Please type something here.</label>
-    <input type="text" id="something" class="form-control" @bind="InputText" @bind:event="oninput"
-           placeholder="something here..." />
+<div class="form-row">
+    <FluentTextField id="something" Label="Something:" Placeholder="something here..." @bind-Value="InputText" Immediate="true" />
 </div>
 
-<div class="alert alert-info mt-3">
-    <strong>Your Input:</strong> @InputText
-</div>
+<FluentMessageBar Intent="MessageIntent.Info" Title="Your Input:" AllowDismiss="false">
+    @InputText
+</FluentMessageBar>
 
 @code {
     // 💡 Reactの [inputText, setInputText] = useState("") と同じ役割を持つプロパティ
     private string InputText { get; set; } = string.Empty;
 }
+
+<style>
+    .form-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .form-row fluent-text-field {
+        font-size: 1.1rem;
+        flex-grow: 1;
+    }
+</style>

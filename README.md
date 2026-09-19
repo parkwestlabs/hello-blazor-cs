@@ -135,6 +135,22 @@ dotnet husky install
 dotnet husky add pre-commit -c "dotnet format --verify-no-changes --severity info"
 ```
 
+* Fluent UI Blazor
+  - https://github.com/microsoft/fluentui-blazor
+
+```bash
+# dotnet templates for new app
+dotnet new install Microsoft.FluentUI.AspNetCore.Templates
+
+dotnet new fluentblazor --name MyApplication --interactivity Server
+```
+
+```bash
+dotnet add src/MyApp.Web package Microsoft.FluentUI.AspNetCore.Components
+dotnet add src/MyApp.Web package Microsoft.FluentUI.AspNetCore.Components.Icons
+dotnet add src/MyApp.Web package Microsoft.FluentUI.AspNetCore.Components.Emoji
+```
+
 * run format test
 
 ```bash

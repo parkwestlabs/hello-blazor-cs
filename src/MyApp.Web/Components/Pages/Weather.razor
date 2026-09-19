@@ -4,7 +4,10 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [StreamRendering]
 
+@using static Microsoft.FluentUI.AspNetCore.Components.Align
 @using MyApp.Core.Interfaces
+@using MyApp.Core.Models
+
 @inject IWeatherService WeatherService
 
 <PageTitle>Weather</PageTitle>
@@ -13,30 +16,19 @@
 
 <p>This component demonstrates showing data.</p>
 
-@if (Forecasts == null)
-{
-    <p><em>Loading...</em></p>
-    return;
-}
+<FluentDataGrid Items="@forecasts" Loading="@(forecasts == null)" Style="height:200px;">
+    <PropertyColumn Title="Date" Property="@(c => c.Date)" Align="Start" />
+    <PropertyColumn Title="Temp. (C)" Property="@(c => c.TemperatureC)" Align="Center" />
+    <PropertyColumn Title="Temp. (F)" Property="@(c => c.TemperatureF)" Align="Center" />
+    <PropertyColumn Title="Summary" Property="@(c => c.Summary)" Align="End" />
+</FluentDataGrid>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th aria-label="Temperature in Celsius">Temp. (C)</th>
-            <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
-            <th>Summary</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var forecast in Forecasts)
-        {
-            <tr>
-                <td>@forecast.Date.ToShortDateString()</td>
-                <td>@forecast.TemperatureC</td>
-                <td>@forecast.TemperatureF</td>
-                <td>@forecast.Summary</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@code {
+    private IQueryable<WeatherForecast>? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await WeatherService.GetActiveForecastsAsync();
+        forecasts = list.AsQueryable();
+    }
+}

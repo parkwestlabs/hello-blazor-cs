@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.FluentUI.AspNetCore.Components;
 using MyApp.Web.Components;
 using MyApp.Core.Interfaces;
 using MyApp.Core.Services;
@@ -31,6 +32,8 @@ if (string.IsNullOrEmpty(secretKey))
 builder.Services.AddDataProtection()
     .SetApplicationName("MyBlazorApp")
     .UseSimpleCryptoTokenProvider(secretKey);
+
+builder.Services.AddFluentUIComponents();
 
 var app = builder.Build();
 

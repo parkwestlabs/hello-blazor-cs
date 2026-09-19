@@ -15,6 +15,7 @@
         "files.trimTrailingWhitespace": true,
         "files.trimFinalNewlines": true,
     },
+    "html.format.wrapLineLength": 150,
     "[aspnetcorerazor]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "ms-dotnettools.csharp",
