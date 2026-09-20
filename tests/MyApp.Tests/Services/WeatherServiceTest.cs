@@ -13,22 +13,21 @@ public class WeatherServiceTest
     {
         var mockRepository = Substitute.For<IWeatherRepository>();
 
-        var dummyResponse = new OpenMeteoResponse
-        {
-            Daily = new DailyData
-            {
-                Time = [
+        var dummyResponse = new OpenMeteoResponse(
+            new DailyData(
+                [
                     new DateOnly(2026, 9, 1),
                     new DateOnly(2026, 9, 2),
                     new DateOnly(2026, 9, 3),
                     new DateOnly(2026, 9, 4),
                     new DateOnly(2026, 9, 5)
                 ],
-                Temperature2mMax = [29.5, 30.1, 29.0, 29.0, 29.0],
-            }
-        };
+                [29.5, 30.1, 29.0, 29.0, 29.0]
+            )
+        );
 
-        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(), Arg.Any<CancellationToken>())
+        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(),
+                Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns(dummyResponse);
 
         // 1. Arrange: テスト対象のサービスをインスタンス化
@@ -51,7 +50,8 @@ public class WeatherServiceTest
         var mockRepository = Substitute.For<IWeatherRepository>();
 
         mockRepository
-            .FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(), Arg.Any<CancellationToken>())
+            .FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(),
+                    Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns((OpenMeteoResponse?)null);
 
         var service = new WeatherService(mockRepository);
@@ -71,9 +71,10 @@ public class WeatherServiceTest
         var mockRepository = Substitute.For<IWeatherRepository>();
 
         // Daily プロパティを null にしたオブジェクトを作成
-        var responseWithNullDaily = new OpenMeteoResponse { Daily = null! };
+        var responseWithNullDaily = new OpenMeteoResponse(null!);
 
-        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(), Arg.Any<CancellationToken>())
+        mockRepository.FetchForecastAsync(Arg.Any<double>(), Arg.Any<double>(),
+                Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
             .Returns(responseWithNullDaily);
 
         var service = new WeatherService(mockRepository);

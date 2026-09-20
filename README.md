@@ -115,6 +115,9 @@ dotnet add tests/MyApp.Tests package Microsoft.Testing.Extensions.CodeCoverage
 # bunit: Blazor UI Component Test Framework
 dotnet add tests/MyApp.Tests package bunit
 
+# https://bunit.dev/docs/test-doubles/mocking-httpclient.html
+dotnet add tests/MyApp.Tests package RichardSzalay.MockHttp
+
 # mock
 dotnet add tests/MyApp.Tests package NSubstitute
 ```

@@ -1,6 +1,9 @@
 using System.Net;
-using System.Text.Json;
-using System.Net.Http.Json;
+using NSubstitute;
+using RichardSzalay.MockHttp;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
+using MsTestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 using MyApp.Data.Repositories;
 using MyApp.Core.Models;
 using MyApp.Tests.Helpers;
@@ -10,48 +13,54 @@ namespace MyApp.Tests.Repositories;
 [TestClass]
 public class WeatherRepositoryTests
 {
+    public required MsTestContext TestContext { get; set; }
+    private CancellationToken Token => TestContext.CancellationToken;
+
     [TestMethod]
     public async Task GetForecastAsync_Returns_WeatherData()
     {
-        var expectedResponse = new OpenMeteoResponse
-        {
-            Daily = new DailyData
-            {
-                Time = [
+        var url = "http://localhost/v1/forecast?latitude=35.6785&longitude=139.6823&daily=temperature_2m_max";
+
+        var dummyResponse = new OpenMeteoResponse(
+            new DailyData(
+                [
                     new DateOnly(2026, 9, 1),
                     new DateOnly(2026, 9, 2),
                     new DateOnly(2026, 9, 3),
                     new DateOnly(2026, 9, 4),
                     new DateOnly(2026, 9, 5)
                 ],
-                Temperature2mMax = [29.5, 30.1, 29.0, 29.0, 29.0],
-            }
-        };
+                [29.5, 30.1, 29.0, 29.0, 29.0]
+            )
+        );
 
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-        };
-        using var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = JsonContent.Create(expectedResponse, options: options)
-        };
+        HttpRequestMessage? actualRequest = null;
 
-        using var testHandler = new FakeHttpMessageHandler(httpResponse);
-        using var httpClient = new HttpClient(testHandler)
-        {
-            BaseAddress = new Uri("https://open-meteo.com")
-        };
-        var repository = new WeatherRepository(httpClient);
+        using var mockHttpHandler = new MockHttpMessageHandler();
 
-        var result = await repository.FetchForecastAsync(35.6785, 139.6823, CancellationToken.None);
+        var requestWatcher = mockHttpHandler.When(HttpMethod.Get, url)
+            .RespondJson(dummyResponse, req => actualRequest = req);
+
+        var httpClient = mockHttpHandler.ToHttpClient();
+        httpClient.BaseAddress = new Uri("http://localhost/");
+
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var logger = NullLogger<WeatherRepository>.Instance;
+
+        var repository = new WeatherRepository(httpClient, cache, logger);
+
+        var duration = TimeSpan.FromMinutes(5);
+        var result = await repository.FetchForecastAsync(35.6785, 139.6823, duration, Token);
+        await repository.FetchForecastAsync(35.6785, 139.6823, duration, Token);
+
+        Assert.AreEqual(1, mockHttpHandler.GetMatchCount(requestWatcher));
 
         Assert.IsNotNull(result);
-        Assert.IsNotNull(testHandler.LastRequest);
 
-        Assert.AreEqual(HttpMethod.Get, testHandler.LastRequest.Method);
-        Assert.IsNotNull(testHandler.LastRequest.RequestUri);
-        Assert.Contains("v1/forecast", testHandler.LastRequest.RequestUri.ToString(), StringComparison.Ordinal);
+        Assert.AreEqual(HttpMethod.Get, actualRequest?.Method);
+
+        Assert.IsNotNull(actualRequest?.RequestUri);
+        Assert.Contains("v1/forecast", actualRequest.RequestUri.ToString());
 
         Assert.HasCount(5, result.Daily.Time);
         Assert.AreEqual(new DateOnly(2026, 9, 1), result.Daily.Time[0]);
@@ -70,14 +79,18 @@ public class WeatherRepositoryTests
         {
             BaseAddress = new Uri("https://open-meteo.com")
         };
-        var repository = new WeatherRepository(httpClient);
+
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var logger = NullLogger<WeatherRepository>.Instance;
+
+        var repository = new WeatherRepository(httpClient, cache, logger);
 
         // 3. 実行 & 検証
         // GetFromJsonAsync はステータスコードがエラー（4xx, 5xx）の場合、
         // 内部で EnsureSuccessStatusCode() を呼び出して HttpRequestException を発生させます。
         var exception = await Assert.ThrowsAsync<HttpRequestException>(async () =>
         {
-            await repository.FetchForecastAsync(35.6785, 139.6823, CancellationToken.None);
+            await repository.FetchForecastAsync(35.6785, 139.6823, TimeSpan.Zero, Token);
         });
 
         // 4. 追加の検証（必要に応じてステータスコードが500であることを確認）

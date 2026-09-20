@@ -1,6 +1,8 @@
 using MyApp.Core.Interfaces;
 using MyApp.Core.Models;
 
+using static System.TimeSpan;
+
 namespace MyApp.Core.Services;
 
 public class WeatherService(IWeatherRepository repository) : IWeatherService
@@ -11,7 +13,8 @@ public class WeatherService(IWeatherRepository repository) : IWeatherService
 
     public async Task<List<WeatherForecast>> GetActiveForecastsAsync(CancellationToken cancellationToken = default)
     {
-        var response = await repository.FetchForecastAsync(TokyoLatitude, TokyoLongitude, cancellationToken);
+        var response = await repository.FetchForecastAsync(
+            TokyoLatitude, TokyoLongitude, FromMinutes(5), cancellationToken);
 
         if (response?.Daily is null)
         {

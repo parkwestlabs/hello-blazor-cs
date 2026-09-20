@@ -16,6 +16,10 @@ max_line_length = 120
 dotnet_diagnostic.CA2007.severity = none
 # CA1515: アプリケーションプロジェクト（Blazorなど）では public で問題ないため非表示
 dotnet_diagnostic.CA1515.severity = none
+# 高パフォーマンスなLoggerMessageを使えという警告（CA1848）を非表示
+dotnet_diagnostic.CA1848.severity = none
+# ログ引数の評価に関する警告（CA1873）を非表示
+dotnet_diagnostic.CA1873.severity = none
 
 # ----- WarningsAsErrors -----
 # IDE0005: 使用していない using をエラーにする（コード保存時に自動削除も可能になります）

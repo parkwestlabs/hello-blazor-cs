@@ -2,17 +2,17 @@ using System.Text.Json.Serialization;
 
 namespace MyApp.Core.Models;
 
-public class OpenMeteoResponse
-{
-    public required DailyData Daily { get; init; }
-}
+public record OpenMeteoResponse(DailyData Daily);
 
-public class DailyData
-{
-    public required IReadOnlyList<DateOnly> Time { get; init; }
-    /// <remarks>
-    /// JsonNamingPolicy.SnakeCaseLower が temperature2_m_max にしてしまう防止策が必要
-    /// </remarks>
-    [JsonPropertyName("temperature_2m_max")]
-    public required IReadOnlyList<double> Temperature2mMax { get; init; }
-}
+/// <summary>
+/// Open-Meteo から返される日ごとの気象データ
+/// </summary>
+/// <param name="Time"></param>
+/// <param name="Temperature2mMax">
+/// JsonNamingPolicy.SnakeCaseLower が temperature2_m_max にしてしまう防止策が必要
+/// </param>
+public record DailyData(
+    IReadOnlyList<DateOnly> Time,
+    [property: JsonPropertyName("temperature_2m_max")]
+    IReadOnlyList<double> Temperature2mMax
+);
