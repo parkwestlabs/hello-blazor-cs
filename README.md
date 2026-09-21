@@ -200,6 +200,20 @@ dotnet package list --outdated
 dotnet package update
 ```
 
+* setup local https
+
+```bash
+# setup dev certificate
+dotnet dev-certs https --trust
+# Trusting the HTTPS development certificate was requested. If the certificate is not already trusted we will run the following command:
+# 'security add-trusted-cert -p basic -p ssl -k <<login-keychain>> <<certificate>>'
+# This command might prompt you for your password to install the certificate on the keychain. To undo these changes: 'security remove-trusted-cert <<certificate>>'
+
+# Successfully trusted the existing HTTPS certificate.
+
+dotnet watch --project src/MyApp.Web --launch-profile https
+```
+
 ## Trouble shooting
 
 * `error CHARSET: Fix file encoding.`
