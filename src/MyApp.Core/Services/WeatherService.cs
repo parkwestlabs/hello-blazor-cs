@@ -11,10 +11,12 @@ public class WeatherService(IWeatherRepository repository) : IWeatherService
     private const double TokyoLatitude = 35.6895;
     private const double TokyoLongitude = 139.6917;
 
-    public async Task<List<WeatherForecast>> GetActiveForecastsAsync(CancellationToken cancellationToken = default)
+    public async Task<List<WeatherForecast>> GetActiveForecastsAsync(bool useCache = true, CancellationToken cancellationToken = default)
     {
+        var cacheDuration = useCache ? FromMinutes(5) : Zero;
+
         var response = await repository.FetchForecastAsync(
-            TokyoLatitude, TokyoLongitude, FromMinutes(5), cancellationToken);
+            TokyoLatitude, TokyoLongitude, cacheDuration, cancellationToken);
 
         if (response?.Daily is null)
         {

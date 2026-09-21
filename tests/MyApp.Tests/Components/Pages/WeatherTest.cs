@@ -31,7 +31,7 @@ public class WeatherTest
 
         var tcs = new TaskCompletionSource<List<WeatherForecast>>();
 
-        mockService.GetActiveForecastsAsync(Arg.Any<CancellationToken>())
+        mockService.GetActiveForecastsAsync(Arg.Any<bool>(), Arg.Any<CancellationToken>())
             .Returns(tcs.Task);
 
         // FluentUI が内部で必要とする共通サービスを一括登録

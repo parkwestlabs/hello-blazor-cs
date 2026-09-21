@@ -4,5 +4,5 @@ namespace MyApp.Core.Interfaces;
 
 public interface IWeatherService
 {
-    Task<List<WeatherForecast>> GetActiveForecastsAsync(CancellationToken cancellationToken = default);
+    Task<List<WeatherForecast>> GetActiveForecastsAsync(bool useCache = true, CancellationToken cancellationToken = default);
 }

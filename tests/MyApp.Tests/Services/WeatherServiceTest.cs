@@ -34,7 +34,7 @@ public class WeatherServiceTest
         var service = new WeatherService(mockRepository);
 
         // 2. Act: メソッドを非同期で実行
-        var result = await service.GetActiveForecastsAsync(CancellationToken.None);
+        var result = await service.GetActiveForecastsAsync(true, CancellationToken.None);
 
         // 3. Assert: 取得したデータの検証
         Assert.IsNotNull(result);
@@ -57,7 +57,7 @@ public class WeatherServiceTest
         var service = new WeatherService(mockRepository);
 
         // Act
-        var result = await service.GetActiveForecastsAsync(Arg.Any<CancellationToken>());
+        var result = await service.GetActiveForecastsAsync(true, Arg.Any<CancellationToken>());
 
         // Assert
         Assert.IsNotNull(result);
@@ -80,7 +80,7 @@ public class WeatherServiceTest
         var service = new WeatherService(mockRepository);
 
         // Act
-        var result = await service.GetActiveForecastsAsync(Arg.Any<CancellationToken>());
+        var result = await service.GetActiveForecastsAsync(true, Arg.Any<CancellationToken>());
 
         // Assert
         Assert.IsNotNull(result);
