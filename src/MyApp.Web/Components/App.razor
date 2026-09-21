@@ -11,11 +11,17 @@
     <link rel="stylesheet" href="@Assets["MyApp.Web.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
 </head>
 
+@*
+* Reactと同じ挙動にする設定
+  - Interactive mode 一括設定 -> MainLayout の FluentToastProvider と共通の SignalR で Toast を機能させる
+  - prerender: false -> OnInitializedAsync を確実に1回しか走らなくしてチラつき防止
+*@
+
 <body>
-    <Routes />
+    <Routes @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>

@@ -1,13 +1,12 @@
 ﻿@page "/weather"
-
-@* OnInitializedAsync を確実に1回しか走らなくしてチラつき防止 (Reactと同じ挙動) *@
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
-@attribute [StreamRendering]
+@inherits NotificationPageBase
 
 @using static Microsoft.FluentUI.AspNetCore.Components.Align
 @using MyApp.Core.Interfaces
 @using MyApp.Core.Models
 
+@inject ILogger<Index> Logger
+@inject IToastService ToastService
 @inject IWeatherService WeatherService
 
 <PageTitle>Weather</PageTitle>
@@ -16,7 +15,7 @@
 
 <p>This component demonstrates showing data.</p>
 
-<FluentDataGrid Items="@forecasts" Loading="@(forecasts == null)" Style="height:200px;">
+<FluentDataGrid Items="@forecasts" Loading="@isLoading" Style="height:200px;">
     <PropertyColumn Title="Date" Property="@(c => c.Date)" Align="Start" />
     <PropertyColumn Title="Temp. (C)" Property="@(c => c.TemperatureC)" Align="Center" />
     <PropertyColumn Title="Temp. (F)" Property="@(c => c.TemperatureF)" Align="Center" />
@@ -24,11 +23,26 @@
 </FluentDataGrid>
 
 @code {
+    private bool isLoading = true; // 💡 初期状態はロード中
     private IQueryable<WeatherForecast>? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        var list = await WeatherService.GetActiveForecastsAsync();
-        forecasts = list.AsQueryable();
+        await ExecuteSafeAsync(
+            action: async () =>
+            {
+                isLoading = true;
+                var list = await WeatherService.GetActiveForecastsAsync();
+                forecasts = list.AsQueryable();
+                isLoading = false;
+
+                Logger.LogInformation("INFO: OnInitializedAsync");
+                ToastService.ShowSuccess("Weather data updated");
+            },
+            onError: () =>
+            {
+                forecasts = Enumerable.Empty<WeatherForecast>().AsQueryable();
+                isLoading = false;
+            });
     }
 }
