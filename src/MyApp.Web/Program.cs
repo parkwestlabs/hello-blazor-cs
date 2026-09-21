@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using MyApp.Web.Components;
 using MyApp.Core.Interfaces;
 using MyApp.Core.Services;
 using MyApp.Data.Repositories;
 using MyApp.Web.Extensions;
+using MyApp.Web.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +18,20 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 
-builder.Services.AddHttpClient<IWeatherRepository, WeatherRepository>(client =>
+// Optionsパターン: appsettings.json からクラスを使って読み出す方法
+builder.Services.AddOptions<WeatherApiOptions>()
+    .Bind(builder.Configuration.GetSection(WeatherApiOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+// builder.Services.AddTransient<I,T>() を裏側でしてくれる
+builder.Services.AddHttpClient<IWeatherRepository, WeatherRepository>((sp, client) =>
 {
     // config values from appsettings.json
-    var baseUrl = builder.Configuration["WeatherApi:BaseUrl"];
-    var uriString = baseUrl ?? throw new InvalidOperationException("APIのURLが設定されていません。");
-    client.BaseAddress = new Uri(uriString);
+    var options = sp.GetRequiredService<IOptions<WeatherApiOptions>>().Value;
+
+    client.BaseAddress = options.BaseUrl;
+    client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
 });
 
 string? secretKey = builder.Configuration["DataProtectionSettings:AppSecretKey"];
