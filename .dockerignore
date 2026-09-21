@@ -1,0 +1,17 @@
+.dockerignore
+.git
+.gitattributes
+.github
+.gitignore
+.husky
+.vscode
+Dockerfile
+LICENSE
+README.md
+TestResults
+artifacts
+check.sh
+compose.yaml
+
+bin
+obj

@@ -47,3 +47,6 @@ jobs:
             -reporttypes:Html \
             --minimumCoverageThresholds:lineCoverage=80 \
             --minimumCoverageThresholds:branchCoverage=80
+
+      - name: Build Docker Image
+        run: docker build -t my-blazor-app .

@@ -16,6 +16,9 @@ docker compose down
 ## Docker Run
 
 ```bash
+docker build --check .
+# Check complete, no warnings found.
+
 docker build -t my-blazor-app .
 
 docker run -p 80:8080 --rm \
