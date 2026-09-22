@@ -48,5 +48,15 @@ jobs:
             --minimumCoverageThresholds:lineCoverage=80 \
             --minimumCoverageThresholds:branchCoverage=80
 
-      - name: Build Docker Image
-        run: docker build -t my-blazor-app .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false # どこにも外部送信しない
+          load: true # ローカルの docker images に登録して、この後のステップで docker run できるようにする
+          tags: my-blazor-app:latest
+          cache-from: type=gha # GitHub Actions Cache から読み込み
+          cache-to: type=gha,mode=max # 次回のために中間レイヤーを含む全レイヤーを GitHub に保存する

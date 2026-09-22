@@ -10,6 +10,8 @@ docker compose up
 
 open http://localhost/
 
+# clean up
+docker compose ps -a
 docker compose down
 ```
 
