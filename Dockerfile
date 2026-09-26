@@ -9,6 +9,7 @@ COPY .editorconfig ./
 COPY dotnet-tools.json ./
 COPY coverage.settings.xml ./
 COPY Directory.Build.props ./
+COPY Directory.Packages.props ./
 
 COPY src/MyApp.Core/MyApp.Core.csproj src/MyApp.Core/
 COPY src/MyApp.Data/MyApp.Data.csproj src/MyApp.Data/

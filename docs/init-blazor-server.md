@@ -38,6 +38,9 @@ dotnet sln MyApp.slnx add tests/MyApp.Tests
 # create UseArtifactsOutput true in Directory.Build.props
 dotnet new buildprops --use-artifacts
 
+# enable CPM (Central Package Management) in Directory.Packages.props
+dotnet new packagesprops
+
 # to ensure dotnet version
 dotnet new globaljson
 ```
@@ -64,6 +67,12 @@ git stash pop                   # i/crlf  w/lf
 git add --renormalize .         # i/lf    w/lf
 
 git commit -m "chore: convert crlf to lf"
+```
+
+* list all packages
+
+```bash
+dotnet list package --include-transitive
 ```
 
 * add packages

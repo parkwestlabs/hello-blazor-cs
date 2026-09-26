@@ -1,0 +1,24 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- packages in Directory.Build.props -->
+    <PackageVersion Include="DependencyInjection.Lifetime.Analyzers" Version="3.7.8"/>
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.34.0.3385" />
+
+    <!-- packages in MyApp.Web.csproj -->
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.14.4" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.14.4" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.4" />
+
+    <!-- packages in MyApp.Tests.csproj -->
+    <PackageVersion Include="bunit" Version="2.11.3" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
+    <PackageVersion Include="MSTest" Version="4.4.0" />
+    <PackageVersion Include="NSubstitute" Version="6.2.0" />
+    <PackageVersion Include="RichardSzalay.MockHttp" Version="7.1.0" />
+  </ItemGroup>
+</Project>
