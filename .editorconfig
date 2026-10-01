@@ -29,3 +29,7 @@ dotnet_diagnostic.IDE0055.severity = error
 
 [*.razor]
 max_line_length = 150
+
+[**/Migrations/**.cs]
+# 自動生成コードとして、解析から除外したい
+generated_code = true

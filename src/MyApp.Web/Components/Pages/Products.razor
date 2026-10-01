@@ -1,0 +1,121 @@
+@page "/products"
+
+@using MyApp.Core.Interfaces
+@using MyApp.Core.Models
+@using MyApp.Web.Components.Forms
+@using MyApp.Web.Extensions
+@using static Microsoft.FluentUI.AspNetCore.Components.Appearance
+@using static Microsoft.FluentUI.AspNetCore.Components.ButtonType
+@using static Microsoft.FluentUI.AspNetCore.Components.VerticalAlignment
+
+@inherits ComponentBaseWithCts
+
+@inject IDialogService DialogService
+@inject IProductService ProductService
+
+<PageTitle>商品管理 (CRUD)</PageTitle>
+
+<h3>商品管理システム</h3>
+
+<FluentCard Class="product-edit-card">
+    <h5>@(editingProduct.Id == 0 ? "新規追加" : "編集")</h5>
+
+    <EditForm Model="editingProduct" OnValidSubmit="SaveProduct">
+        <DataAnnotationsValidator />
+        <FluentValidationSummary />
+
+        <FluentGrid Spacing="2">
+            <FormField Label="商品名">
+                <FluentTextField Id="product-name" @bind-Value="editingProduct.Name" />
+            </FormField>
+
+            <FormField Label="価格">
+                <FluentNumberField Id="product-price" @bind-Value="editingProduct.Price" />
+            </FormField>
+
+            <FormField Label="">
+                <FluentStack>
+                    <FluentButton Type="Submit" Appearance="Accent">保存</FluentButton>
+                    @if (editingProduct.Id != 0)
+                    {
+                        <FluentButton Type="Button" Appearance="Neutral" OnClick="CancelEdit">キャンセル</FluentButton>
+                    }
+                </FluentStack>
+            </FormField>
+        </FluentGrid>
+    </EditForm>
+</FluentCard>
+
+<FluentDataGrid Items="@filteredProducts" Loading="@(products == null)">
+
+    <PropertyColumn Property="@(p => p.Id)" Title="ID" Sortable="true" />
+    <PropertyColumn Property="@(p => p.Name)" Title="商品名" Sortable="true" />
+    <PropertyColumn Property="@(p => p.Price)" Title="価格" Format="C" Sortable="true" />
+
+    <TemplateColumn Title="操作">
+        <FluentStack VerticalAlignment="Center">
+            <FluentButton IconStart="@EditIcon" Title="編集" OnClick="() => EditProduct(context)" />
+            <FluentButton IconStart="@DeleteIcon" Title="削除" OnClick="() => DeleteProduct(context)" />
+        </FluentStack>
+    </TemplateColumn>
+</FluentDataGrid>
+
+@code {
+    private static readonly Icon EditIcon = new Icons.Filled.Size16.Edit();
+    private static readonly Icon DeleteIcon = new Icons.Filled.Size16.Delete().WithColor(Color.Error);
+
+    private List<Product>? products;
+    private IQueryable<Product>? filteredProducts;
+    private Product editingProduct = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        products = await ProductService.GetAllProductsAsync(CancellationToken);
+        filteredProducts = products?.AsQueryable();
+    }
+
+    private async Task SaveProduct()
+    {
+        await ProductService.SaveProductAsync(editingProduct);
+        editingProduct = new(); // フォームのリセット
+        await LoadProducts(); // 再読み込み
+    }
+
+    private void EditProduct(Product product)
+    {
+        // 参照を切り離すために新しいインスタンスをコピー
+        editingProduct = new Product(product);
+    }
+
+    private async Task DeleteProduct(Product product)
+    {
+        bool isConfirmed = await DialogService.ShowDeleteConfirmationAsync(product.Name);
+
+        if (isConfirmed)
+        {
+            await ProductService.DeleteProductAsync(product.Id);
+            await LoadProducts();
+        }
+    }
+
+    private void CancelEdit()
+    {
+        editingProduct = new();
+    }
+}
+
+<style>
+    .product-edit-card {
+        height: fit-content;
+        margin-bottom: 1.5rem;
+    }
+
+    td fluent-button {
+        height: 22px;
+    }
+</style>

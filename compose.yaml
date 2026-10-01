@@ -8,3 +8,34 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       # optional: overwrite value in appsettings.Development.json
       - DataProtectionSettings__AppSecretKey=local-development-secret-12345
+      - ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=devdb;Username=devuser;Password=devpassword
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: devdb
+      # 日本語の並び替え（ロケール）を安定させるための設定
+      LANG: ja_JP.utf8
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  pgweb:
+    image: sosedoff/pgweb:latest
+    container_name: pgweb-dev
+    restart: unless-stopped
+    ports:
+      - "8081:8081" # ブラウザで http://localhost:8081 にアクセス
+    environment:
+      # 起動時に自動で上記のpostgresコンテナに接続させる設定
+      - DATABASE_URL=postgres://devuser:devpassword@postgres:5432/devdb?sslmode=disable
+    depends_on:
+      - postgres
+
+volumes:
+  db-data:

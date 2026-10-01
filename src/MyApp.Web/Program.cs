@@ -1,16 +1,26 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using MyApp.Web.Components;
 using MyApp.Core.Interfaces;
 using MyApp.Core.Services;
 using MyApp.Data.Repositories;
 using MyApp.Web.Extensions;
 using MyApp.Web.Options;
+using MyApp.Data.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMemoryCache();
+
+// PostgreSQLのDbContextを登録
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -48,6 +58,8 @@ builder.Services.AddDataProtection()
 builder.Services.AddFluentUIComponents();
 
 var app = builder.Build();
+
+app.RunDatabaseMigrations();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -21,6 +21,7 @@
         <Source>.*\bRoutes\.razor$</Source>
         <Source>.*Layout.*\.razor$</Source>
         <Source>.*Error.*\.razor$</Source>
+        <Source>.*[/\\]Migrations[/\\].*</Source>
       </Exclude>
     </Sources>
 

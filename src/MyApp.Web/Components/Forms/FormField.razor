@@ -1,0 +1,17 @@
+@using static Microsoft.FluentUI.AspNetCore.Components.FontWeight
+
+<FluentGridItem xs="12" Style="display: flex; align-items: center; gap: 12px;">
+    <FluentLabel Weight="Bold" Style="width: 120px; min-width: 120px;">
+        @Label
+    </FluentLabel>
+
+    <!-- 入力コンポーネントとその内部のWeb Component要素を強制的に全幅化 -->
+    <div style="flex-grow: 1; width: 100%; display: grid;">
+        @ChildContent
+    </div>
+</FluentGridItem>
+
+@code {
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
